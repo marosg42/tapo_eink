@@ -1,6 +1,6 @@
 #### Note to myself
 
-- Font.tcc missing
+- Font.ttc missing
 
 - list.yaml is needed
 
