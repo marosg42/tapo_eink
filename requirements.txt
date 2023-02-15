@@ -1,0 +1,7 @@
+PyP100
+telepot
+pyyaml
+Pillow
+spidev
+RPi.GPIO
+waveshare-epaper
