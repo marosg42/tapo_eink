@@ -27,14 +27,32 @@ def show_image(black_image, red_image, clear=False):
         logging.info(e)
 
 
+def get_red_image(black_picture: Path) -> Image:
+    name = str(black_picture).split(".")
+    name[1] = name[1].replace("black", "red")
+    redfile = Path(".".join(name))
+    if redfile.is_file():
+        im_red = Image.open(redfile)
+        resized_red = im_red.resize((WIDTH, HEIGHT))
+        return resized_red.convert("1")
+    if random.randint(0, 1) == 0:
+        empty_image = Image.new("1", (WIDTH, HEIGHT), 255)
+        return empty_image
+    return None
+
+
 def show_random_image():
     mydir = Path("pictures")
-    pictures = list(mydir.glob("*"))
-    im = Image.open(pictures[random.randint(0, len(pictures) - 1)])
-    resized = im.resize((WIDTH, HEIGHT))
-    imnew = resized.convert("1")
-    empty_image = Image.new("1", (WIDTH, HEIGHT), 255)
-    show_image(imnew, empty_image, clear=True)
+    pictures = list(mydir.glob("*black*"))
+    picture = pictures[random.randint(0, len(pictures) - 1)]
+    im_black = Image.open(picture)
+    resized_black = im_black.resize((WIDTH, HEIGHT))
+    blackimage = resized_black.convert("1")
+    redimage = get_red_image(picture)
+    if redimage is not None:
+        show_image(blackimage, redimage, clear=True)
+    else:
+        show_image(blackimage, blackimage, clear=True)
 
 
 def show_plugs(plugs):
