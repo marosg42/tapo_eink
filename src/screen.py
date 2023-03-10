@@ -28,9 +28,8 @@ def show_image(black_image, red_image, clear=False):
 
 
 def get_red_image(black_picture: Path) -> Image:
-    name = str(black_picture).split(".")
-    name[1] = name[1].replace("black", "red")
-    redfile = Path(".".join(name))
+    name = str(black_picture).replace("black", "red")
+    redfile = Path(name)
     if redfile.is_file():
         im_red = Image.open(redfile)
         resized_red = im_red.resize((WIDTH, HEIGHT))
