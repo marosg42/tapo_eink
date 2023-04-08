@@ -27,6 +27,16 @@ def show_image(black_image, red_image, clear=False):
         logging.info(e)
 
 
+def get_random_picture():
+    mydir = Path("pictures")
+    while True:
+        print("starting again")
+        pictures = list(mydir.glob("*black*"))
+        random.shuffle(pictures)
+        for picture in pictures:
+            yield picture
+
+
 def get_red_image(black_picture: Path) -> Image:
     name = str(black_picture).replace("black", "red")
     redfile = Path(name)
@@ -41,9 +51,8 @@ def get_red_image(black_picture: Path) -> Image:
 
 
 def show_random_image():
-    mydir = Path("pictures")
-    pictures = list(mydir.glob("*black*"))
-    picture = pictures[random.randint(0, len(pictures) - 1)]
+    picture_gen = get_random_picture()
+    picture = next(picture_gen)
     im_black = Image.open(picture)
     resized_black = im_black.resize((WIDTH, HEIGHT))
     blackimage = resized_black.convert("1")
