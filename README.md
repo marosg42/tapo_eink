@@ -7,7 +7,7 @@
 ```
 - ip: P115-1.lan
   threshold_up: 10.0
-  threshold_down: 5.0
+  threshold_down: 6.0
 - ip: P115-2.lan
   threshold_up: 10.0
   threshold_down: 3.0
