@@ -30,7 +30,7 @@ def show_image(black_image, red_image, clear=False):
 def get_random_picture():
     mydir = Path("pictures")
     while True:
-        print("starting again")
+        logging.info("Randomizing pictures")
         pictures = list(mydir.glob("*black*"))
         random.shuffle(pictures)
         for picture in pictures:
