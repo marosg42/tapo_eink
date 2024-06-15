@@ -11,6 +11,16 @@ from screen import show_plugs, show_random_image
 LONG_SLEEP = 300
 SHORT_SLEEP = 60
 
+
+def send_message(bot, msg):
+    logging.info(f"Sending message: {msg}")
+    try:
+        bot.sendMessage(os.environ["TELEGRAM_SEND_TO"], msg)
+    except Exception as e:
+        logging.error("Telegram failed")
+        logging.error(e)
+
+
 def initialize_plugs(plugs):
     for plug in plugs:
         plug["tapo"] = PyP110.P110(
@@ -23,6 +33,7 @@ def initialize_plugs(plugs):
         plug["tapo"].login()
         plug["name"] = plug["tapo"].getDeviceName()
         plug["login_needed"] = False
+
 
 def relogin(plug):
     logging.info(f"{plug['name']}:   Trying to re-login")
@@ -55,9 +66,7 @@ def test_plug(plug, bot):
     if plug["is_on"]:
         plug["sleep"] = SHORT_SLEEP
         if current_w < plug["threshold_down"]:
-            if plug["below_threshold_count"] < plug.get(
-                "below_threshold_max_count", 2
-            ):
+            if plug["below_threshold_count"] < plug.get("below_threshold_max_count", 2):
                 logging.info(
                     f"{plug['name']}: {plug['below_threshold_count']} < {plug.get('below_threshold_max_count', 2)}"
                 )
@@ -69,9 +78,7 @@ def test_plug(plug, bot):
                     f"{plug['name']}: {plug['below_threshold_count']} >= {plug.get('below_threshold_max_count', 2)}"
                 )
                 logging.info(f"{plug['name']}:" + " " * 40 + "OFF")
-                bot.sendMessage(
-                    os.environ["TELEGRAM_SEND_TO"], f"{plug['name']}: OFF"
-                )
+                send_message(bot, f"{plug['name']}: OFF")
                 return True
         else:
             plug["below_threshold_count"] = 0
@@ -81,7 +88,7 @@ def test_plug(plug, bot):
             plug["below_threshold_count"] = 0
             plug["sleep"] = SHORT_SLEEP
             logging.info(f"{plug['name']}:" + " " * 40 + "ON")
-            bot.sendMessage(os.environ["TELEGRAM_SEND_TO"], f"{plug['name']}: ON")
+            send_message(bot, f"{plug['name']}: ON")
             return True
 
 
@@ -106,11 +113,12 @@ def run_it(plugs, bot):
         logging.info(f"Going to sleep for {sleeptime} seconds")
         time.sleep(sleeptime)
 
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 
     bot = telepot.Bot(os.environ["TELEGRAM_BOT_ID"])
-    bot.sendMessage(os.environ["TELEGRAM_SEND_TO"], "Started")
+    send_message(bot, "Started")
 
     f = open("list.yaml", mode="r")
     plugs = yaml.load(f, Loader=yaml.FullLoader)
@@ -118,4 +126,4 @@ if __name__ == "__main__":
     initialize_plugs(plugs)
 
     show_random_image()
-    run_it()
+    run_it(plugs, bot)

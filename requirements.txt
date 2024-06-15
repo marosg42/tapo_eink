@@ -1,7 +1,7 @@
 PyP100
 telepot
 pyyaml
-Pillow
+Pillow==9.5.0
 spidev
 RPi.GPIO
 waveshare-epaper
