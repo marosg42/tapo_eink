@@ -37,6 +37,9 @@ def get_random_picture():
             yield picture
 
 
+random_picture_generator = get_random_picture()
+
+
 def get_red_image(black_picture: Path) -> Image:
     name = str(black_picture).replace("black", "red")
     redfile = Path(name)
@@ -51,8 +54,7 @@ def get_red_image(black_picture: Path) -> Image:
 
 
 def show_random_image():
-    picture_gen = get_random_picture()
-    picture = next(picture_gen)
+    picture = next(random_picture_generator)
     im_black = Image.open(picture)
     resized_black = im_black.resize((WIDTH, HEIGHT))
     blackimage = resized_black.convert("1")
