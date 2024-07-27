@@ -14,6 +14,7 @@ SHORT_SLEEP = 60
 
 def send_message(bot, msg):
     logging.info(f"Sending message: {msg}")
+    return
     try:
         bot.sendMessage(os.environ["TELEGRAM_SEND_TO"], msg)
     except Exception as e:
@@ -23,38 +24,29 @@ def send_message(bot, msg):
 
 def initialize_plugs(plugs):
     for plug in plugs:
+        logging.info(plug["ip"])
         plug["tapo"] = PyP110.P110(
             plug["ip"], os.environ["TPLINK_LOGIN"], os.environ["TPLINK_PASSWORD"]
         )
         plug["sleep"] = LONG_SLEEP
         plug["is_on"] = False
         plug["below_threshold_count"] = 0
-        plug["tapo"].handshake()
-        plug["tapo"].login()
         plug["name"] = plug["tapo"].getDeviceName()
         plug["login_needed"] = False
+    return plugs
 
 
 def relogin(plug):
     logging.info(f"{plug['name']}:   Trying to re-login")
-    try:
-        plug["tapo"].handshake()
-        plug["tapo"].login()
-    except Exception as e:
-        logging.info(f"{plug['name']}:   Connection error during re-login")
-        logging.info(e)
-        return False
     plug["login_needed"] = False
     plug["sleep"] = LONG_SLEEP
     return True
 
 
 def test_plug(plug, bot):
-    if plug["login_needed"]:
-        if not relogin(plug):
-            return False
     try:
-        usage = plug["tapo"].getEnergyUsage()["result"]
+        #logging.info(plug["tapo"].getEnergyUsage())
+        usage = plug["tapo"].getEnergyUsage()
     except Exception:
         plug["login_needed"] = True
         plug["sleep"] = SHORT_SLEEP
@@ -123,7 +115,7 @@ if __name__ == "__main__":
     f = open("list.yaml", mode="r")
     plugs = yaml.load(f, Loader=yaml.FullLoader)
 
-    initialize_plugs(plugs)
+    plugs = initialize_plugs(plugs)
 
     show_random_image()
     run_it(plugs, bot)

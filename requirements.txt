@@ -1,4 +1,4 @@
-PyP100
+git+https://github.com/almottier/TapoP100.git@main
 telepot
 pyyaml
 Pillow==9.5.0

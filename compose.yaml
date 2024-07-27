@@ -1,11 +1,11 @@
 services:
-  deluge:
+  tapo_eink:
     image: tapo_eink
     container_name: tapo_eink
     privileged: true
     env_file: env-file   
     volumes:
-      - "${HOME}/eink/list.yaml:/code/list.yaml"
+      - "${HOME}/tapo_eink/list.yaml:/code/list.yaml"
       - "${HOME}/pictures:/code/pictures"
       - "/dev/mem:/dev/mem"
     restart: unless-stopped
