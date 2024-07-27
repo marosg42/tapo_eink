@@ -66,20 +66,18 @@ def show_random_image():
 
 
 def show_plugs(plugs):
-    list_plugs = list(plugs)
-
     bw_image = Image.new("1", (WIDTH, HEIGHT), 255)
     red_image = Image.new("1", (WIDTH, HEIGHT), 255)
     draw_bw_image = ImageDraw.Draw(bw_image)
     draw_red_image = ImageDraw.Draw(red_image)
 
-    dim_y = int(HEIGHT / max(len(list_plugs), 4))
+    dim_y = int(HEIGHT / max(len(plugs), 4))
     font = ImageFont.truetype("Font.ttc", int(dim_y * 0.8))
     onoff_dim = font.getbbox("OFF1")
     onoff_x_pos = WIDTH - onoff_dim[2]
-    for i, plug in enumerate(list_plugs):
-        draw_bw_image.text((50, (i + 0.1) * dim_y), plug[0], font=font, fill=0)
-        if plug[1]:
+    for i, plug in enumerate(plugs):
+        draw_bw_image.text((50, (i + 0.1) * dim_y), plug["name"], font=font, fill=0)
+        if plug["is_on"]:
             on_dim = font.getsize("ON")
             draw_red_image.rounded_rectangle(
                 [
